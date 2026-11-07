@@ -115,7 +115,9 @@
   }
 
   function openWhatsApp(phone, message) {
-    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(message || FALLBACK_MSG), '_blank', 'noopener,noreferrer');
+    var url = 'https://wa.me/' + String(phone).replace(/\D/g, '') +
+      '?text=' + encodeURIComponent(message || FALLBACK_MSG);
+    window.location.assign(url); // NUNCA window.open/_blank após async
   }
 
   document.addEventListener('click', function (e) {
@@ -140,12 +142,12 @@
     Promise.all([nextSeller(), attributionWait])
       .then(function (results) {
         var seller = results[0] || {};
-        var phone = seller.phone ? String(seller.phone) : '';
-        if (!phone) return;
+        var phone = seller.phone ? String(seller.phone) : '5521980802382';
         openWhatsApp(phone, seller.message || FALLBACK_MSG);
       })
       .catch(function (err) {
         console.error('[Vesto] Não foi possível obter o próximo vendedor.', err);
+        openWhatsApp('5521980802382', FALLBACK_MSG);
       })
       .finally(function () { busy = false; });
   }, true);
